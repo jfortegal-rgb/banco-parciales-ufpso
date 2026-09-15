@@ -1,0 +1,604 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banco de Parciales · UFPS Ocaña</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --papel:#fbfbf9;--linea:#dde5ec;--tinta:#16253b;--tinta-suave:#5b6b80;
+    --rojo:#b4282c;--lapiz:#8a95a3;--marcador:#f2e27a;--verde:#2f6b4f;--borde:#d9dee5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Archivo',system-ui,sans-serif;color:var(--tinta);background-color:var(--papel);
+    background-image:linear-gradient(var(--linea) 1px,transparent 1px),linear-gradient(90deg,var(--linea) 1px,transparent 1px);
+    background-size:26px 26px;-webkit-font-smoothing:antialiased;
+  }
+  .contenedor{max-width:1080px;margin:0 auto;padding:0 20px}
+  a{color:var(--rojo)}
+  button{font-family:inherit}
+  :focus-visible{outline:2px solid var(--rojo);outline-offset:2px}
+
+  header.sitio{background:#fff;border-bottom:2px solid var(--tinta)}
+  .barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+  .marca{display:flex;align-items:baseline;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:19px;cursor:pointer}
+  .marca span{font-weight:500;font-size:13px;color:var(--tinta-suave);letter-spacing:0}
+  .btn{border:2px solid var(--tinta);background:var(--tinta);color:#fff;padding:9px 16px;border-radius:2px;font-weight:600;font-size:14px;cursor:pointer}
+  .btn:hover{background:#0d1929}
+  .btn.linea{background:transparent;color:var(--tinta)}
+  .btn.linea:hover{background:#eef2f6}
+  .btn.rojo{background:var(--rojo);border-color:var(--rojo)}
+  .btn.rojo:hover{background:#8f1f23}
+
+  .portada{background:#fff;border-bottom:1px solid var(--borde);padding:40px 0 30px}
+  .portada h1{font-size:clamp(28px,5vw,48px);line-height:1.03;letter-spacing:-.035em;font-weight:800;margin:0 0 13px;max-width:17ch}
+  .portada p.intro{margin:0 0 24px;max-width:58ch;color:var(--tinta-suave);font-size:16px;line-height:1.55}
+  .buscador{display:flex;border:2px solid var(--tinta);border-radius:2px;background:#fff;max-width:640px}
+  .buscador input{flex:1;border:0;padding:14px 16px;font-size:16px;font-family:inherit;color:var(--tinta);background:transparent}
+  .buscador input:focus{outline:none}
+  .buscador button{border:0;background:var(--tinta);color:#fff;padding:0 22px;font-weight:600;cursor:pointer;font-size:15px}
+  .cifras{display:flex;gap:26px;margin-top:20px;flex-wrap:wrap}
+  .cifra b{display:block;font-size:25px;font-weight:800;letter-spacing:-.02em}
+  .cifra span{font-size:13px;color:var(--tinta-suave)}
+
+  /* Directorio de carreras */
+  .directorio{padding:34px 0 10px}
+  .directorio h2{font-size:22px;letter-spacing:-.025em;margin:0 0 4px}
+  .directorio > .contenedor > p{margin:0 0 22px;color:var(--tinta-suave);font-size:14.5px}
+  .facultad{margin-bottom:26px}
+  .facultad h3{font-size:14px;font-weight:700;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--tinta)}
+  .carreras{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px}
+  .carrera{
+    background:#fff;border:1px solid var(--borde);border-left:4px solid var(--lapiz);
+    padding:12px 14px;text-align:left;cursor:pointer;display:block;width:100%;
+  }
+  .carrera:hover{border-left-color:var(--rojo);border-color:var(--lapiz)}
+  .carrera b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:2px}
+  .carrera span{font-size:12.5px;color:var(--tinta-suave)}
+  .carrera.comun{border-left-color:var(--rojo);grid-column:1/-1}
+
+  main{padding:26px 0 70px}
+  .columnas{display:grid;grid-template-columns:240px 1fr;gap:34px;align-items:start}
+  aside{position:sticky;top:16px}
+  .grupo{margin-bottom:20px}
+  .grupo h3{font-size:13px;font-weight:700;margin:0 0 9px}
+  .grupo label{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--tinta-suave);padding:3px 0;cursor:pointer;line-height:1.3}
+  .grupo label:hover{color:var(--tinta)}
+  input[type=checkbox]{accent-color:var(--rojo);width:15px;height:15px;flex:none}
+  .limpiar{background:none;border:0;color:var(--rojo);font-size:13px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+  .subgrupo{margin:2px 0 10px 4px;padding-left:9px;border-left:1px solid var(--borde)}
+  .subgrupo h4{font-size:11.5px;font-weight:600;color:var(--lapiz);margin:6px 0 2px}
+
+  .encabezado-lista{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .encabezado-lista p{margin:0;font-size:14px;color:var(--tinta-suave)}
+  select.orden{border:1px solid var(--borde);background:#fff;padding:7px 9px;border-radius:2px;font-size:13px;font-family:inherit;color:var(--tinta)}
+
+  .ficha{background:#fff;border:1px solid var(--borde);border-left:4px solid var(--tinta);padding:16px 18px;margin-bottom:12px;position:relative;cursor:pointer}
+  .ficha:hover{border-color:var(--lapiz);border-left-color:var(--rojo)}
+  .ficha h2{font-size:18px;margin:0 0 3px;letter-spacing:-.02em;font-weight:700;padding-right:112px}
+  .meta{font-size:13.5px;color:var(--tinta-suave);margin:0 0 10px}
+  .etiquetas{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .etq{font-size:12px;border:1px solid var(--borde);padding:2px 7px;border-radius:2px;color:var(--tinta-suave);background:#f7f9fb}
+  .etq.sol{border-color:var(--verde);color:var(--verde);background:#eef5f1;font-weight:600}
+  .etq.comun{border-color:var(--rojo);color:var(--rojo);background:#faf0f0}
+  .etq.util{border:0;background:transparent;padding-left:0}
+  .sello{position:absolute;top:14px;right:14px;transform:rotate(-4deg);border:2px solid var(--rojo);color:var(--rojo);font-size:11px;font-weight:800;padding:4px 8px;letter-spacing:.06em;line-height:1;text-align:center;max-width:104px;background:rgba(255,255,255,.7)}
+  .ejemplo-tag{position:absolute;bottom:14px;right:16px;font-size:11.5px;color:var(--lapiz)}
+
+  .vacio{background:#fff;border:1px dashed var(--lapiz);padding:34px 24px;text-align:center}
+  .vacio h3{margin:0 0 6px;font-size:17px}
+  .vacio p{margin:0 0 16px;color:var(--tinta-suave);font-size:14.5px;line-height:1.5}
+
+  .fondo{position:fixed;inset:0;background:rgba(22,37,59,.55);display:none;z-index:40;overflow-y:auto;padding:22px}
+  .fondo.ver{display:block}
+  .panel{background:#fff;max-width:620px;margin:0 auto;border:2px solid var(--tinta);position:relative}
+  .panel-cab{padding:18px 22px;border-bottom:1px solid var(--borde);display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+  .panel-cab h2{margin:0;font-size:21px;letter-spacing:-.02em}
+  .panel-cuerpo{padding:20px 22px}
+  .cerrar{border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--tinta-suave);padding:0 2px}
+  .campo{margin-bottom:15px}
+  .campo label{display:block;font-size:13.5px;font-weight:600;margin-bottom:5px}
+  .campo .pista{font-weight:400;color:var(--tinta-suave)}
+  .campo input,.campo select,.campo textarea{width:100%;border:1px solid var(--borde);border-radius:2px;padding:9px 11px;font-size:14.5px;font-family:inherit;color:var(--tinta);background:#fff}
+  .campo input:focus,.campo select:focus,.campo textarea:focus{outline:none;border-color:var(--tinta);box-shadow:0 0 0 2px #e6ecf2}
+  .campo textarea{resize:vertical;min-height:70px}
+  .dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .error{color:var(--rojo);font-size:12.5px;margin-top:4px;display:none}
+  .campo.mal input,.campo.mal select{border-color:var(--rojo)}
+  .campo.mal .error{display:block}
+  .aviso{background:#fffbea;border:1px solid #e8d98a;padding:11px 13px;font-size:13px;line-height:1.5;margin-bottom:18px}
+  .acciones{display:flex;gap:10px;justify-content:flex-end;padding-top:6px;flex-wrap:wrap}
+
+  .dato{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #eef1f4;font-size:14.5px}
+  .dato span:first-child{color:var(--tinta-suave)}
+  .notas{background:#f7f9fb;border-left:3px solid var(--marcador);padding:12px 14px;margin:16px 0;font-size:14.5px;line-height:1.55}
+
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:11px 18px;font-size:14px;border-radius:2px;z-index:60;display:none}
+  .toast.ver{display:block}
+  footer{border-top:1px solid var(--borde);background:#fff;padding:26px 0;font-size:13px;color:var(--tinta-suave);line-height:1.6}
+  .movil-filtros{display:none}
+  .oculto{display:none}
+
+  @media(max-width:820px){
+    .columnas{grid-template-columns:1fr}
+    aside{position:static;border:1px solid var(--borde);background:#fff;padding:16px}
+    .movil-filtros{display:block;width:100%;margin-bottom:12px}
+    .ficha h2{padding-right:0}
+    .sello{position:static;display:inline-block;transform:none;margin-bottom:8px}
+    .ejemplo-tag{position:static;display:block;margin-top:8px}
+    .dos{grid-template-columns:1fr}
+    .dato{grid-template-columns:1fr;gap:2px;padding:7px 0}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="sitio">
+  <div class="contenedor barra">
+    <div class="marca" id="inicio">Banco de Parciales <span>UFPS Ocaña</span></div>
+    <button class="btn rojo" id="abrirSubir">Subir un parcial</button>
+  </div>
+</header>
+
+<section class="portada">
+  <div class="contenedor">
+    <h1>Los parciales de todas las carreras, en un solo lugar.</h1>
+    <p class="intro">Hecho por estudiantes de la Francisco de Paula Santander seccional Ocaña. Entra por tu carrera o busca por materia, docente o código: los parciales del ciclo básico aparecen en todos los programas que ven esa materia.</p>
+    <div class="buscador">
+      <input id="q" type="search" placeholder="Cálculo diferencial, Zootecnia, 1155101…" aria-label="Buscar parciales">
+      <button id="btnBuscar">Buscar</button>
+    </div>
+    <div class="cifras">
+      <div class="cifra"><b id="cTotal">0</b><span>parciales publicados</span></div>
+      <div class="cifra"><b id="cMaterias">0</b><span>materias con registro</span></div>
+      <div class="cifra"><b id="cSol">0</b><span>incluyen solución</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="directorio" id="directorio">
+  <div class="contenedor">
+    <h2>Elige tu carrera</h2>
+    <p>Nueve programas de pregrado de la seccional. El número es cuántos parciales hay hoy para cada uno.</p>
+    <div id="listaCarreras"></div>
+  </div>
+</section>
+
+<main>
+  <div class="contenedor columnas">
+    <button class="btn linea movil-filtros" id="verFiltros">Mostrar filtros</button>
+
+    <aside id="panelFiltros" class="oculto">
+      <div class="grupo">
+        <h3>Carrera</h3>
+        <div id="fCarrera"></div>
+      </div>
+      <div class="grupo">
+        <h3>Tipo de evaluación</h3>
+        <div id="fTipo"></div>
+      </div>
+      <div class="grupo">
+        <h3>Periodo</h3>
+        <div id="fPeriodo"></div>
+      </div>
+      <div class="grupo">
+        <label><input type="checkbox" id="fSolucion"> Solo con solución</label>
+        <label><input type="checkbox" id="fComunes" checked> Incluir materias del ciclo básico</label>
+        <label><input type="checkbox" id="fEjemplos" checked> Mostrar ejemplos de muestra</label>
+      </div>
+      <button class="limpiar" id="limpiar">Quitar todos los filtros</button>
+    </aside>
+
+    <section>
+      <div class="encabezado-lista">
+        <p id="conteo">Cargando parciales…</p>
+        <select class="orden" id="orden" aria-label="Ordenar resultados">
+          <option value="recientes">Más recientes</option>
+          <option value="utiles">Más útiles</option>
+          <option value="materia">Materia (A–Z)</option>
+        </select>
+      </div>
+      <div id="lista"></div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="contenedor">
+    Proyecto estudiantil independiente, sin vínculo oficial con la Universidad Francisco de Paula Santander seccional Ocaña.
+    El sitio guarda la ficha y el enlace de cada parcial; los archivos viven en la nube de quien los comparte.
+    Si un docente pide retirar un material, se retira.
+  </div>
+</footer>
+
+<div class="fondo" id="modalSubir">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="tSubir">
+    <div class="panel-cab">
+      <h2 id="tSubir">Subir un parcial</h2>
+      <button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    </div>
+    <div class="panel-cuerpo">
+      <div class="aviso">Lo que publiques aquí lo ve cualquier persona que entre al sitio, sin tu nombre: las publicaciones son anónimas. Sube el archivo a Drive o OneDrive con permiso de lectura para todos y pega el enlace: el sitio guarda el enlace, no el archivo.</div>
+      <form id="formSubir" novalidate>
+        <div class="campo" id="c-materia">
+          <label for="i-materia">Materia</label>
+          <input id="i-materia" placeholder="Cálculo diferencial">
+          <div class="error">Escribe el nombre de la materia.</div>
+        </div>
+        <div class="campo" id="c-carrera">
+          <label for="i-carrera">Carrera</label>
+          <select id="i-carrera"></select>
+          <div class="error">Elige la carrera.</div>
+        </div>
+        <div class="campo">
+          <label><input type="checkbox" id="i-comun"> Es materia del ciclo básico y la ven varias carreras</label>
+        </div>
+        <div class="dos">
+          <div class="campo" id="c-docente">
+            <label for="i-docente">Docente</label>
+            <input id="i-docente" placeholder="Nombre del docente">
+            <div class="error">Escribe el docente, o "No recuerdo".</div>
+          </div>
+          <div class="campo">
+            <label for="i-codigo">Código <span class="pista">(opcional)</span></label>
+            <input id="i-codigo" placeholder="1155101">
+          </div>
+        </div>
+        <div class="dos">
+          <div class="campo" id="c-periodo">
+            <label for="i-periodo">Periodo</label>
+            <select id="i-periodo"></select>
+            <div class="error">Elige el periodo.</div>
+          </div>
+          <div class="campo" id="c-tipo">
+            <label for="i-tipo">Tipo de evaluación</label>
+            <select id="i-tipo"></select>
+            <div class="error">Elige el tipo.</div>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="i-dificultad">Dificultad percibida</label>
+          <select id="i-dificultad"><option>Suave</option><option selected>Normal</option><option>Pesado</option></select>
+        </div>
+        <div class="campo" id="c-enlace">
+          <label for="i-enlace">Enlace al archivo</label>
+          <input id="i-enlace" placeholder="https://drive.google.com/…">
+          <div class="error">Pega un enlace que empiece por https://</div>
+        </div>
+        <div class="campo">
+          <label><input type="checkbox" id="i-solucion"> El archivo incluye la solución</label>
+        </div>
+        <div class="campo">
+          <label for="i-temas">Temas que evaluaron <span class="pista">(opcional)</span></label>
+          <textarea id="i-temas" placeholder="Límites, continuidad, derivadas por definición. El punto 4 valía la mitad."></textarea>
+        </div>
+
+        <div class="acciones">
+          <button type="button" class="btn linea" data-cerrar>Cancelar</button>
+          <button type="submit" class="btn rojo">Publicar parcial</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="fondo" id="modalDetalle">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="tDetalle">
+    <div class="panel-cab">
+      <h2 id="tDetalle">Parcial</h2>
+      <button class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+    </div>
+    <div class="panel-cuerpo" id="detalleCuerpo"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* Oferta de pregrado de la seccional. Para agregar un programa nuevo,
+   añádelo a la facultad que corresponda y el resto del sitio se acomoda solo. */
+const OFERTA = [
+  {facultad:"Facultad de Ingenierías", carreras:["Ingeniería de Sistemas","Ingeniería Civil","Ingeniería Mecánica"]},
+  {facultad:"Facultad de Ciencias Agrarias y del Ambiente", carreras:["Ingeniería Ambiental","Zootecnia"]},
+  {facultad:"Facultad de Ciencias Administrativas y Económicas", carreras:["Administración de Empresas","Contaduría Pública"]},
+  {facultad:"Facultad de Educación, Artes y Humanidades", carreras:["Comunicación Social","Derecho"]}
+];
+const COMUN = "Ciclo básico (varias carreras)";
+const CARRERAS = OFERTA.flatMap(f=>f.carreras);
+const TIPOS = ["Primer parcial","Segundo parcial","Tercer parcial","Examen final","Quiz","Supletorio","Habilitación"];
+const PERIODOS = ["2026-1","2025-2","2025-1","2024-2","2024-1","2023-2","2023-1","Anterior a 2023"];
+const CLAVE = "parciales:publicados:v2";
+const SOLO_COMUNES = "__ciclo_basico__";
+
+const EJEMPLOS = [
+  {id:"ej1",ejemplo:true,materia:"Cálculo diferencial",codigo:"1155101",carrera:"Ingeniería de Sistemas",comun:true,docente:"Ej. docente de Ciencias Básicas",periodo:"2025-2",tipo:"Primer parcial",dificultad:"Pesado",solucion:true,enlace:"",temas:"Límites por definición, continuidad, teorema del valor intermedio. Cinco puntos, el último con dos literales.",fecha:"2026-01-20",utiles:0},
+  {id:"ej2",ejemplo:true,materia:"Programación orientada a objetos",codigo:"1155202",carrera:"Ingeniería de Sistemas",comun:false,docente:"Ej. docente de Sistemas",periodo:"2025-2",tipo:"Examen final",dificultad:"Normal",solucion:false,enlace:"",temas:"Herencia, polimorfismo y manejo de excepciones. Un punto pedía diagrama de clases en papel.",fecha:"2026-01-18",utiles:0},
+  {id:"ej3",ejemplo:true,materia:"Contabilidad general",codigo:"",carrera:"Contaduría Pública",comun:false,docente:"Ej. docente de Contaduría",periodo:"2025-1",tipo:"Segundo parcial",dificultad:"Normal",solucion:true,enlace:"",temas:"Partida doble, libro diario y balance de prueba.",fecha:"2026-01-15",utiles:0},
+  {id:"ej4",ejemplo:true,materia:"Nutrición animal",codigo:"",carrera:"Zootecnia",comun:false,docente:"Ej. docente de Zootecnia",periodo:"2025-2",tipo:"Quiz",dificultad:"Suave",solucion:false,enlace:"",temas:"Requerimientos energéticos y formulación de raciones.",fecha:"2026-01-12",utiles:0},
+  {id:"ej5",ejemplo:true,materia:"Derecho constitucional",codigo:"",carrera:"Derecho",comun:false,docente:"Ej. docente de Derecho",periodo:"2025-1",tipo:"Primer parcial",dificultad:"Pesado",solucion:false,enlace:"",temas:"Bloque de constitucionalidad y acción de tutela. Dos casos para resolver por escrito.",fecha:"2026-01-10",utiles:0},
+  {id:"ej6",ejemplo:true,materia:"Mecánica de fluidos",codigo:"",carrera:"Ingeniería Civil",comun:true,docente:"Ej. docente de Civil",periodo:"2024-2",tipo:"Segundo parcial",dificultad:"Pesado",solucion:true,enlace:"",temas:"Ecuación de Bernoulli y pérdidas por fricción en tuberías.",fecha:"2026-01-08",utiles:0}
+];
+
+let publicados=[], cargando=true;
+const estado={q:"",carreras:new Set(),tipos:new Set(),periodos:new Set(),soloSolucion:false,verComunes:true,verEjemplos:true,orden:"recientes"};
+
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+/* ---------- controles ---------- */
+function llenarControles(){
+  const cs=document.getElementById("i-carrera");
+  cs.insertAdjacentHTML("beforeend",'<option value="">Elige una</option>');
+  OFERTA.forEach(f=>{
+    cs.insertAdjacentHTML("beforeend",`<optgroup label="${f.facultad}">${f.carreras.map(c=>`<option>${c}</option>`).join("")}</optgroup>`);
+  });
+  const sel=(id,arr)=>{
+    const s=document.getElementById(id);
+    s.insertAdjacentHTML("beforeend",'<option value="">Elige uno</option>');
+    arr.forEach(v=>s.insertAdjacentHTML("beforeend",`<option>${v}</option>`));
+  };
+  sel("i-periodo",PERIODOS); sel("i-tipo",TIPOS);
+
+  document.getElementById("fCarrera").innerHTML = OFERTA.map(f=>
+    `<div class="subgrupo"><h4>${f.facultad.replace("Facultad de ","")}</h4>
+      ${f.carreras.map(c=>`<label><input type="checkbox" value="${c}"> ${c}</label>`).join("")}
+    </div>`).join("");
+  document.getElementById("fCarrera").addEventListener("change",e=>{
+    if(e.target.checked) estado.carreras.add(e.target.value); else estado.carreras.delete(e.target.value);
+    pintar();
+  });
+
+  const caja=(cont,arr,set)=>{
+    document.getElementById(cont).innerHTML=arr.map(v=>`<label><input type="checkbox" value="${v}"> ${v}</label>`).join("");
+    document.getElementById(cont).addEventListener("change",e=>{
+      if(e.target.checked) set.add(e.target.value); else set.delete(e.target.value);
+      pintar();
+    });
+  };
+  caja("fTipo",TIPOS,estado.tipos);
+  caja("fPeriodo",PERIODOS.slice(0,6),estado.periodos);
+}
+
+/* ---------- datos ---------- */
+async function cargar(){
+  try{
+    const r=await window.storage.get(CLAVE,true);
+    publicados = r && r.value ? JSON.parse(r.value) : [];
+  }catch(e){ publicados=[]; }
+  cargando=false; pintar();
+}
+async function guardar(){
+  try{ await window.storage.set(CLAVE,JSON.stringify(publicados),true); return true; }
+  catch(e){ return false; }
+}
+
+function todos(){ return estado.verEjemplos ? publicados.concat(EJEMPLOS) : publicados.slice(); }
+
+function coincideCarrera(p){
+  if(!estado.carreras.size) return estado.verComunes || !p.comun;
+  if(estado.carreras.has(p.carrera)) return true;
+  return p.comun && estado.verComunes;
+}
+
+function filtrados(){
+  const q=estado.q.trim().toLowerCase();
+  let r=todos().filter(p=>{
+    if(!coincideCarrera(p)) return false;
+    if(estado.tipos.size && !estado.tipos.has(p.tipo)) return false;
+    if(estado.periodos.size && !estado.periodos.has(p.periodo)) return false;
+    if(estado.soloSolucion && !p.solucion) return false;
+    if(q){
+      const t=[p.materia,p.codigo,p.docente,p.carrera,p.temas,p.tipo].join(" ").toLowerCase();
+      if(!t.includes(q)) return false;
+    }
+    return true;
+  });
+  if(estado.orden==="utiles") r.sort((a,b)=>(b.utiles||0)-(a.utiles||0));
+  else if(estado.orden==="materia") r.sort((a,b)=>a.materia.localeCompare(b.materia,"es"));
+  else r.sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha)));
+  return r;
+}
+
+/* ---------- pintado ---------- */
+function pintarDirectorio(){
+  const t=todos();
+  const cuenta=c=>t.filter(p=>p.carrera===c||p.comun).length;
+  const comunes=t.filter(p=>p.comun).length;
+  document.getElementById("listaCarreras").innerHTML =
+    OFERTA.map(f=>`
+      <div class="facultad">
+        <h3>${f.facultad}</h3>
+        <div class="carreras">
+          ${f.carreras.map(c=>{
+            const n=cuenta(c);
+            return `<button class="carrera" data-carrera="${esc(c)}">
+              <b>${esc(c)}</b>
+              <span>${n===0?"Sin parciales todavía":n===1?"1 parcial disponible":n+" parciales disponibles"}</span>
+            </button>`;
+          }).join("")}
+        </div>
+      </div>`).join("") +
+    `<div class="facultad"><h3>Materias que ven varias carreras</h3>
+      <div class="carreras">
+        <button class="carrera comun" data-comun="1">
+          <b>Ciclo básico</b>
+          <span>${comunes} parciales de cálculo, física, química y afines, visibles desde cualquier carrera</span>
+        </button>
+      </div></div>`;
+}
+
+function pintar(){
+  const lista=document.getElementById("lista"), conteo=document.getElementById("conteo");
+  const t=todos();
+  document.getElementById("cTotal").textContent=t.length;
+  document.getElementById("cMaterias").textContent=new Set(t.map(p=>p.materia.toLowerCase())).size;
+  document.getElementById("cSol").textContent=t.filter(p=>p.solucion).length;
+  pintarDirectorio();
+
+  if(cargando){ conteo.textContent="Cargando parciales…"; lista.innerHTML=""; return; }
+
+  const r=filtrados();
+  let dondeSt="";
+  if(estado.carreras.size===1){
+    const c=[...estado.carreras][0];
+    dondeSt = c===SOLO_COMUNES ? " del ciclo básico" : " en "+c;
+  }
+  conteo.textContent = (r.length===1?"1 parcial":`${r.length} parciales`)+dondeSt;
+
+  if(!r.length){
+    lista.innerHTML=`<div class="vacio">
+      <h3>Todavía no hay nada con esos filtros</h3>
+      <p>Quita algún filtro, o sé quien publique el primero de esa materia. Un parcial subido hoy le sirve a toda la carrera el próximo semestre.</p>
+      <button class="btn rojo" onclick="document.getElementById('abrirSubir').click()">Subir un parcial</button>
+    </div>`;
+    return;
+  }
+
+  lista.innerHTML=r.map(p=>`
+    <article class="ficha" tabindex="0" data-id="${p.id}">
+      <div class="sello">${esc(p.tipo)}</div>
+      <h2>${esc(p.materia)}</h2>
+      <p class="meta">${esc(p.docente)} · ${esc(p.periodo)}${p.codigo?" · "+esc(p.codigo):""}</p>
+      <div class="etiquetas">
+        <span class="etq">${esc(p.carrera)}</span>
+        ${p.comun?'<span class="etq comun">Ciclo básico</span>':""}
+        <span class="etq">Dificultad: ${esc(p.dificultad)}</span>
+        ${p.solucion?'<span class="etq sol">Con solución</span>':""}
+        ${(p.utiles||0)>0?`<span class="etq util">${p.utiles} lo encontraron útil</span>`:""}
+      </div>
+      ${p.ejemplo?'<span class="ejemplo-tag">Ficha de muestra</span>':""}
+    </article>`).join("");
+}
+
+/* ---------- detalle ---------- */
+function abrirDetalle(id){
+  const p=todos().find(x=>x.id===id); if(!p) return;
+  document.getElementById("tDetalle").textContent=p.materia;
+  document.getElementById("detalleCuerpo").innerHTML=`
+    <div class="dato"><span>Tipo</span><span>${esc(p.tipo)}</span></div>
+    <div class="dato"><span>Carrera</span><span>${esc(p.carrera)}${p.comun?" · también la ven otras carreras":""}</span></div>
+    <div class="dato"><span>Docente</span><span>${esc(p.docente)}</span></div>
+    <div class="dato"><span>Periodo</span><span>${esc(p.periodo)}</span></div>
+    ${p.codigo?`<div class="dato"><span>Código</span><span>${esc(p.codigo)}</span></div>`:""}
+    <div class="dato"><span>Dificultad</span><span>${esc(p.dificultad)}</span></div>
+    <div class="dato"><span>Solución</span><span>${p.solucion?"Incluida":"No incluida"}</span></div>
+
+    ${p.temas?`<div class="notas"><b>Qué evaluaron:</b> ${esc(p.temas)}</div>`:""}
+    <div class="acciones" style="justify-content:flex-start;margin-top:18px">
+      ${p.enlace?`<a class="btn" style="text-decoration:none;color:#fff" href="${esc(p.enlace)}" target="_blank" rel="noopener">Abrir el archivo</a>`
+        :`<span style="font-size:14px;color:var(--tinta-suave)">Ficha de muestra, sin archivo adjunto.</span>`}
+      ${p.ejemplo?"":`<button class="btn linea" id="btnUtil">Me sirvió (${p.utiles||0})</button>`}
+    </div>`;
+  const bu=document.getElementById("btnUtil");
+  if(bu) bu.onclick=async()=>{
+    const real=publicados.find(x=>x.id===id); if(!real) return;
+    real.utiles=(real.utiles||0)+1;
+    bu.textContent=`Me sirvió (${real.utiles})`; bu.disabled=true;
+    await guardar(); pintar();
+  };
+  abrir("modalDetalle");
+}
+
+/* ---------- modales y eventos ---------- */
+function abrir(id){document.getElementById(id).classList.add("ver");document.body.style.overflow="hidden";}
+function cerrarTodo(){document.querySelectorAll(".fondo").forEach(f=>f.classList.remove("ver"));document.body.style.overflow="";}
+
+document.addEventListener("click",e=>{
+  if(e.target.matches("[data-cerrar]")){cerrarTodo();return;}
+  if(e.target.classList.contains("fondo")){cerrarTodo();return;}
+
+  const c=e.target.closest(".carrera");
+  if(c){
+    estado.carreras.clear();
+    document.querySelectorAll("#fCarrera input").forEach(i=>i.checked=false);
+    if(c.dataset.carrera){
+      estado.carreras.add(c.dataset.carrera);
+      const cb=document.querySelector(`#fCarrera input[value="${c.dataset.carrera}"]`);
+      if(cb) cb.checked=true;
+    }else{
+      // Solo ciclo básico: ninguna carrera marcada coincide, y las comunes sí pasan.
+      estado.carreras.add(SOLO_COMUNES);
+      estado.verComunes=true;
+      document.getElementById("fComunes").checked=true;
+    }
+    pintar();
+    document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
+    return;
+  }
+
+  const f=e.target.closest(".ficha");
+  if(f) abrirDetalle(f.dataset.id);
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape") cerrarTodo();
+  if(e.key==="Enter"&&document.activeElement.classList.contains("ficha")) abrirDetalle(document.activeElement.dataset.id);
+});
+
+document.getElementById("inicio").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+
+function aviso(txt){
+  const t=document.getElementById("toast");
+  t.textContent=txt;t.classList.add("ver");
+  setTimeout(()=>t.classList.remove("ver"),3200);
+}
+
+/* ---------- formulario ---------- */
+document.getElementById("abrirSubir").onclick=()=>abrir("modalSubir");
+
+document.getElementById("formSubir").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const v=id=>document.getElementById(id).value.trim();
+  const reglas=[
+    ["c-materia", v("i-materia").length>1],
+    ["c-carrera", v("i-carrera")!==""],
+    ["c-docente", v("i-docente").length>1],
+    ["c-periodo", v("i-periodo")!==""],
+    ["c-tipo", v("i-tipo")!==""],
+    ["c-enlace", /^https:\/\/.+\..+/.test(v("i-enlace"))]
+  ];
+  let ok=true;
+  reglas.forEach(([id,bien])=>{document.getElementById(id).classList.toggle("mal",!bien); if(!bien) ok=false;});
+  if(!ok){document.querySelector(".campo.mal input,.campo.mal select").focus();return;}
+
+  publicados.unshift({
+    id:"p"+Date.now()+Math.random().toString(36).slice(2,6),
+    materia:v("i-materia"),codigo:v("i-codigo"),carrera:v("i-carrera"),
+    comun:document.getElementById("i-comun").checked,
+    docente:v("i-docente"),periodo:v("i-periodo"),tipo:v("i-tipo"),
+    dificultad:v("i-dificultad"),solucion:document.getElementById("i-solucion").checked,
+    enlace:v("i-enlace"),temas:v("i-temas"),
+    fecha:new Date().toISOString().slice(0,10),utiles:0
+  });
+  const guardado=await guardar();
+  cerrarTodo(); e.target.reset();
+  document.querySelectorAll(".campo.mal").forEach(c=>c.classList.remove("mal"));
+  pintar();
+  aviso(guardado?"Parcial publicado. Gracias por compartir.":"Se publicó, pero no se pudo guardar. Intenta de nuevo.");
+});
+
+/* ---------- filtros ---------- */
+document.getElementById("q").addEventListener("input",e=>{estado.q=e.target.value;pintar();});
+document.getElementById("btnBuscar").onclick=()=>{estado.q=document.getElementById("q").value;pintar();document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});};
+document.getElementById("orden").addEventListener("change",e=>{estado.orden=e.target.value;pintar();});
+document.getElementById("fSolucion").addEventListener("change",e=>{estado.soloSolucion=e.target.checked;pintar();});
+document.getElementById("fComunes").addEventListener("change",e=>{estado.verComunes=e.target.checked;pintar();});
+document.getElementById("fEjemplos").addEventListener("change",e=>{estado.verEjemplos=e.target.checked;pintar();});
+document.getElementById("limpiar").onclick=()=>{
+  estado.carreras.clear();estado.tipos.clear();estado.periodos.clear();
+  estado.soloSolucion=false;estado.q="";estado.verComunes=true;estado.verEjemplos=true;
+  document.querySelectorAll("aside input[type=checkbox]").forEach(c=>c.checked=(c.id==="fComunes"||c.id==="fEjemplos"));
+  document.getElementById("q").value="";
+  pintar();
+};
+document.getElementById("verFiltros").onclick=e=>{
+  const a=document.getElementById("panelFiltros");
+  a.classList.toggle("oculto");
+  e.target.textContent=a.classList.contains("oculto")?"Mostrar filtros":"Ocultar filtros";
+};
+if(window.matchMedia("(min-width:821px)").matches) document.getElementById("panelFiltros").classList.remove("oculto");
+
+llenarControles();
+cargar();
+</script>
