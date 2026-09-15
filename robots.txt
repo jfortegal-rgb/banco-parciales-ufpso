@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jfortegal-rgb.github.io/banco-parciales-ufpso/sitemap.xml
